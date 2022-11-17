@@ -2,21 +2,15 @@
 
 /**
  * binary_tree_size - measures the size of a binary tree
+ * @tree: tree to measure the size of
  *
- * @tree: a pointer to the root node of the tree to measure the size
- * Return: (size_t)
+ * Return: size of the tree
+ *         0 if tree is NULL
  */
 size_t binary_tree_size(const binary_tree_t *tree)
 {
-	size_t leftNodes = 0;
-	size_t rightNodes = 0;
-	size_t nodeCount;
-
-	if (tree == NULL)
+	if (!tree)
 		return (0);
 
-	leftNodes = binary_tree_size(tree->left);
-	rightNodes = binary_tree_size(tree->right);
-	nodeCount = leftNodes + rightNodes;
-	return (nodeCount + 1);
+	return (binary_tree_size(tree->left) + binary_tree_size(tree->right) + 1);
 }

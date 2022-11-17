@@ -1,68 +1,37 @@
 #include "binary_trees.h"
 
 /**
- * in_order_traversal - traverse in order
- *
- * @tree: a pointer to the root node
- * @list: a pointer to the list
- */
-void in_order_traversal(const binary_tree_t *tree, linked_list_t **list)
-{
-	linked_list_t *node;
-
-	if (tree == NULL)
-		return;
-
-	in_order_traversal(tree->left, list);
-	node = malloc(sizeof(linked_list_t));
-	if (node == NULL)
-		return;
-	node->n = tree->n;
-	node->next = NULL;
-	node->tail = NULL;
-	if (*list == NULL)
-	{
-		*list = node;
-		(*list)->tail = node;
-	}
-	else
-	{
-		(*list)->tail->next = node;
-		(*list)->tail = node;
-	}
-	in_order_traversal(tree->right, list);
-}
-/**
  * binary_tree_is_bst - checks if a binary tree is a valid Binary Search Tree
- *
  * @tree: a pointer to the root node of the tree to check
- * Return: (int)
+ *
+ * Return: 1 if tree is a valid BST
+ *         0 otherwise
  */
 int binary_tree_is_bst(const binary_tree_t *tree)
 {
-	linked_list_t **list;
-	linked_list_t *node, *tmp;
-	int is_bst = 1;
+	if (!tree)
+		return (0);
+	return (btib_helper(tree, INT_MIN, INT_MAX));
+}
 
-	if (tree == NULL)
+/**
+ * btib_helper - checks if a binary tree is a valid Binary Search Tree
+ * @tree: a pointer to the root node of the tree to check
+ * @min: Lower bound of checked nored
+ * @max: Upper bound of checked nodes
+ *
+ * Return: 1 if tree is a valid BST
+ *         0 otherwise
+ */
+int btib_helper(const binary_tree_t *tree, int min, int max)
+{
+	if (!tree)
+		return (1);
+
+	if (tree->n < min || tree->n > max)
 		return (0);
 
-	list = calloc(sizeof(linked_list_t *), 1024);
-	if (list == NULL)
-		return (0);
-	in_order_traversal(tree, list);
-	node = *list;
-	while (node != NULL)
-	{
-		if (node->next)
-		{
-			if (node->n >= node->next->n)
-				is_bst = 0;
-		}
-		tmp = node->next;
-		free(node);
-		node = tmp;
-	}
-	free(list);
-	return (is_bst);
+	return (btib_helper(tree->left, min, tree->n - 1) &&
+		btib_helper(tree->right, tree->n + 1, max));
+	/* -1 and +1 stem from "There must be no duplicate values" req */
 }
